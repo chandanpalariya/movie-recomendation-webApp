@@ -45,7 +45,7 @@ Rules:
 
     reply.send({ movies });
   } catch (err) {
-    console.error("🔥 GEMINI ERROR:", err);
+    console.error(" GEMINI ERROR:", err);
     reply.code(500).send({ error: "Gemini API error" });
   }
 };
