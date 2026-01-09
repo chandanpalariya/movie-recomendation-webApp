@@ -8,8 +8,12 @@ import recommendRoutes from "./routes/recommend.js";
 dotenv.config();
 
 const fastify = Fastify();
-fastify.register(cors, { origin: true });
 
+fastify.register(cors, {
+  origin: process.env.FRONTEND_URL, //  frontend URL here
+  methods: ["GET", "POST"],
+  credentials: true
+});
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
 
 fastify.decorate("db", db);
