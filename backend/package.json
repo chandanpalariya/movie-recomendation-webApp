@@ -8,6 +8,7 @@
   "dependencies": {
     "@fastify/cors": "^8.4.0",
     "@google/generative-ai": "^0.24.1",
+    "better-sqlite3": "^12.5.0",
     "dotenv": "^16.4.0",
     "fastify": "^4.26.0",
     "sqlite3": "^5.1.7"

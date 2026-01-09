@@ -1,5 +1,3 @@
-
-
 export const recommendMovies = async (req, reply) => {
   try {
     const { preference } = req.body;
@@ -13,24 +11,21 @@ export const recommendMovies = async (req, reply) => {
     });
 
     const prompt = `
-Suggest 3 to 5 popular ${preference} movies.
-Return ONLY movie names, one per line.
+Suggest 3 to 5 popular BOLLYWOOD (Hindi) movies based on:
+"${preference}"
 
 Rules:
 
-- Prefer well-known & highly rated movies
+-Prefer well-known & highly rated movies
 - Avoid repeating movie names
 - Return ONLY movie names
 `;
 
     const result = await model.generateContent(prompt);
 
-    const candidates = result?.response?.candidates;
-    if (!candidates?.length) {
-      return reply.send({ movies: [] });
-    }
+    const text =
+      result?.response?.candidates?.[0]?.content?.parts?.[0]?.text;
 
-    const text = candidates[0]?.content?.parts?.[0]?.text;
     if (!text) {
       return reply.send({ movies: [] });
     }
@@ -40,15 +35,17 @@ Rules:
       .map(m => m.replace(/^\d+\.?\s*/, "").trim())
       .filter(Boolean);
 
-    req.server.db.run(
-      `INSERT INTO recommendations (user_input, recommended_movies)
-       VALUES (?, ?)`,
-      [preference, JSON.stringify(movies)]
-    );
+    // Save to DB (SYNC)
+    req.server.db
+      .prepare(
+        `INSERT INTO recommendations (user_input, recommended_movies)
+         VALUES (?, ?)`
+      )
+      .run(preference, JSON.stringify(movies));
 
     reply.send({ movies });
   } catch (err) {
-    console.error("GEMINI FAILURE:", err);
+    console.error("🔥 GEMINI ERROR:", err);
     reply.code(500).send({ error: "Gemini API error" });
   }
 };
