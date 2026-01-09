@@ -6,6 +6,10 @@
   "scripts": {
     "start": "node server.js"
   },
+  "engines": {
+  "node": "18.x"
+},
+
   "dependencies": {
     "@fastify/cors": "^8.4.0",
     "@google/generative-ai": "^0.24.1",
